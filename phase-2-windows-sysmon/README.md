@@ -1,221 +1,323 @@
-# WORK IN PROGRESS -HOLD YR WIN-DOORS MEANWHILE
-
 # SOC Home Lab – Phase 2: Windows Telemetry & Sysmon Integration
 
 *Windows Endpoint Integration | Security Event Monitoring | Sysmon Telemetry*
+
+<p align="center">
+
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Windows](https://img.shields.io/badge/Windows-10-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://microsoft.com)
+[![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-0056D2?style=for-the-badge)](https://wazuh.com/)
+[![Sysmon](https://img.shields.io/badge/Sysmon-SwiftOnSecurity-darkgreen?style=for-the-badge)](https://github.com/SwiftOnSecurity/sysmon-config)
+[![VMware](https://img.shields.io/badge/VMware-Workstation-607078?style=for-the-badge&logo=vmware&logoColor=white)](https://www.vmware.com/)
+[![Phase](https://img.shields.io/badge/Series-Phase_2_of_3-8B0000?style=for-the-badge)](https://github.com/kripy17)
+[![Status](https://img.shields.io/badge/Status-Complete-2ea44f?style=for-the-badge)](https://github.com/kripy17)
+
+</p>
+
+---
+
+## 📋 Table of Contents
+
+<details open>
+<summary><strong>🖥️ Agent Onboarding</strong></summary>
+
+&nbsp;&nbsp;&nbsp;&nbsp;`01` [Project Overview](#1-project-overview)  
+&nbsp;&nbsp;&nbsp;&nbsp;`02` [Lab Objectives & Initial Agent Onboarding](#2-lab-objectives--initial-agent-onboarding)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.1` [Windows VM Configuration](#21-windows-vm-configuration)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.2` [Verify SOC Server Services](#22-verify-soc-server-services)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.3` [Confirm Required Ports Are Listening](#23-confirm-required-ports-are-listening)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.4` [Register the Windows Agent](#24-register-the-windows-agent)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.5` [Configure and Start Windows Agent](#25-configure-and-start-windows-agent)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2.6` [Verify Telemetry & Log Flow](#26-verify-telemetry--log-flow)  
+
+</details>
+
+<details open>
+<summary><strong>🔬 Sysmon Integration</strong></summary>
+
+&nbsp;&nbsp;&nbsp;&nbsp;`03` [Sysmon Configuration for Enhanced Endpoint Telemetry](#3-sysmon-configuration-for-enhanced-endpoint-telemetry)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3.1` [Sysmon Configuration File](#31-sysmon-configuration-file)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3.2` [Applying the Configuration](#32-applying-the-configuration)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3.3` [Verifying Sysmon Event Logs in Event Viewer](#33-verifying-sysmon-event-logs-in-event-viewer)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3.4` [Integration with Wazuh](#34-integration-with-wazuh)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`3.5` [Telemetry Validation](#35-telemetry-validation)  
+
+</details>
+
 ---
 
 ## 1. Project Overview
 
-This repository documents the second phase of my Security Operations Center (SOC) home lab, focused on expanding monitoring capabilities to include Windows-based telemetry.
+This repository documents the second phase of my **Security Operations Center (SOC) home lab**, focused on expanding monitoring capabilities to include Windows-based telemetry.
 
-Following the successful deployment of a centralized SIEM infrastructure using the Wazuh platform, this phase integrates a Windows 10 endpoint to enhance visibility into operating system–level security events.
+Following the successful deployment of a centralized SIEM infrastructure in [Phase 1](../phase-1-wazuh-deployment), this phase integrates a **Windows 10 endpoint** into the existing Wazuh environment to enhance visibility into operating system–level security events.
 
-The objective of this phase is to:
+Phase 1 established the foundation — a fully operational Wazuh stack monitoring a Kali Linux endpoint. Phase 2 extends that foundation by onboarding a Windows machine, which introduces an entirely different category of telemetry: **Windows Event Logs, registry activity, process creation chains, and network connection tracking** — all critical signals in real SOC environments.
 
-• Deploy and register a Windows Wazuh agent
-• Monitor native Windows Security Event logs
-• Integrate and configure Sysmon for enhanced process-level telemetry
-• Validate centralized log ingestion within the Wazuh Dashboard
-• Troubleshoot agent registration and connectivity issues
+**The objectives of this phase are:**
 
-By incorporating Sysmon telemetry, this lab extends beyond basic log collection into detailed endpoint activity monitoring, including process creation, command-line execution, and persistence-related events.
+* Deploy and register a Windows Wazuh agent into the existing SOC infrastructure
+* Monitor native Windows Security Event logs through the Wazuh Dashboard
+* Integrate and configure **Sysmon** for enhanced process-level telemetry
+* Validate centralized log ingestion from the Windows endpoint
+* Troubleshoot agent registration and connectivity issues as they arise
 
-This phase transitions the lab from foundational infrastructure deployment into practical Windows endpoint monitoring, closely aligning with real-world SOC analyst workflows.
+By incorporating Sysmon telemetry, this phase transitions the lab from foundational Linux-based log collection into **detailed Windows endpoint monitoring** — including process creation, command-line execution, and persistence-related events commonly investigated in real SOC workflows.
+
+> 📌 **Back to main project:** [SOC Home Lab](../README.md)
 
 ---
 
 ## 2. Lab Objectives & Initial Agent Onboarding
 
-This project focuses on **onboarding a Windows endpoint with Sysmon telemetry** into the existing Wazuh SOC infrastructure and validating that the telemetry is successfully forwarded to the SOC server. The primary objectives are:
+This phase focuses on **onboarding a Windows 10 endpoint** into the existing Wazuh SOC infrastructure and validating that telemetry is successfully forwarded to the SOC server.
 
-* Verify SOC server services are operational
+Before any Sysmon configuration or attack simulation can take place, the agent pipeline must be fully operational. A broken or misconfigured agent silently drops logs — meaning detections fail without any obvious error. Getting this right first is fundamental SOC hygiene.
+
+**Primary objectives:**
+
+* Verify SOC server services are operational before onboarding
 * Confirm required network ports for Wazuh communication are open
-* Register the Windows agent securely
+* Register the Windows agent securely using the Wazuh GUI
 * Start and validate the agent service on the Windows VM
 * Confirm the agent is active and communicating with the SOC server
-* Verify telemetry/log flow is functional
-
-This ensures a **working endpoint-to-SIEM pipeline**, forming the foundation for further log analysis and attack simulation.
+* Verify telemetry and log flow is functional end-to-end
 
 ---
 
 ### 2.1 Windows VM Configuration
 
-The Windows 10 endpoint VM is configured to balance realism with host system constraints (8GB total RAM):
+The Windows 10 endpoint VM is configured to balance realism with host system constraints. Running the Wazuh SOC server alongside a Windows VM on 8GB total host RAM requires careful resource allocation to keep both machines stable.
 
-| Resource | Allocation   |
-| -------- | ------------ |
-| RAM      | 4 GB         |
-| CPU      | 2 Cores      |
-| Disk     | 40 GB        |
-| Network  | VMnet8 (NAT) |
-| Sysmon   | Installed    |
+| Resource | Allocation |
+|---|---|
+| RAM | 4 GB |
+| CPU | 2 Cores |
+| Disk | 40 GB |
+| Network | VMnet8 (NAT) |
+| Sysmon | Installed |
 
 <img src="screenshots/windows/windows_vm_allocation.png" width="700">
 
-This allocation ensures the VM can run **Sysmon** and the **Wazuh agent** while maintaining stability alongside the SOC server and other lab VMs.
+This allocation gives the Windows VM enough headroom to run Sysmon and the Wazuh agent simultaneously while keeping the host system stable. The NAT network places the Windows endpoint on the same internal subnet as the SOC server, enabling direct agent-to-manager communication.
 
 ---
 
 ### 2.2 Verify SOC Server Services
 
-Before onboarding any agent, it is important to ensure that all **Wazuh services** on the SOC server are running and ready to process incoming events.
+Before onboarding any new agent, all Wazuh services on the SOC server must be confirmed as running. A degraded or stopped component at this stage would cause agent registration to fail silently — making this verification step critical before proceeding.
 
-<img src="screenshots/wazuh/deployment_wazuh_services_running1.png" width="700">  
+<img src="screenshots/wazuh/deployment_wazuh_services_running1.png" width="700">
 <img src="screenshots/wazuh/deployment_wazuh_services_running2.png" width="700">
 
 **Services verified:**
 
-* Wazuh Manager
-* Wazuh Indexer (OpenSearch)
-* Wazuh Dashboard
-* Filebeat
+| Service | Role |
+|---|---|
+| Wazuh Manager | Receives and processes agent logs |
+| Wazuh Indexer (OpenSearch) | Indexes and stores events |
+| Wazuh Dashboard | Visualizes telemetry and alerts |
+| Filebeat | Forwards logs to the indexer |
+
+All four services returned `active (running)` before agent onboarding began.
 
 ---
 
 ### 2.3 Confirm Required Ports Are Listening
 
-Ensure the SOC server and Windows endpoint can communicate over the required Wazuh ports:
+Wazuh agent communication depends on specific ports being open on the SOC server. These were verified to be listening before the Windows agent was registered — a step learned from Phase 1, where blocked ports caused silent registration failures.
 
-* **1514:** Agent data communication
-* **1515:** Agent registration
-* **443:** Wazuh Dashboard access
+| Port | Purpose |
+|---|---|
+| **1514** | Agent data communication |
+| **1515** | Agent registration |
+| **443** | Wazuh Dashboard HTTPS access |
 
 <img src="screenshots/wazuh/deployment_ports_listening.png" width="700">
+
+All required ports confirmed as listening and reachable from the Windows VM.
 
 ---
 
 ### 2.4 Register the Windows Agent
 
-The Windows agent is registered using the **Wazuh GUI**, and a secure key is generated for authentication.
+The Windows agent was registered through the **Wazuh Dashboard GUI**, which generates a unique authentication key for the endpoint. This key-based approach ensures only authorised agents can forward logs to the SIEM — preventing unauthorised data injection.
 
-<img src="screenshots/wazuh/deployment_agent_created.png" width="700">  
-<img src="screenshots/wazuh/deployment_agent_active_server.png" width="700">  
+<img src="screenshots/wazuh/deployment_agent_created.png" width="700">
+<img src="screenshots/wazuh/deployment_agent_active_server.png" width="700">
 
-The agent is assigned an ID and marked **Active** once connected.
+The agent was assigned a unique ID and its status transitioned to **Active** once the connection was established from the Windows VM side.
 
 ---
 
 ### 2.5 Configure and Start Windows Agent
 
-After registration:
+With the agent registered, the Wazuh agent on the Windows VM was configured with the SOC server's IP address and the generated authentication key, then started as a Windows service.
 
-1. **Configure the agent in the Wazuh Windows GUI**
+**1. Configure the agent using the Wazuh Windows GUI:**
 
 <img src="screenshots/windows/deployment_windows_gui_configured.png" width="700">
 
-2. **Start the Wazuh agent service** on the Windows VM and confirm it is running:
+**2. Start the Wazuh agent service and confirm it is running:**
 
 <img src="screenshots/windows/deployment_windows_service_running.png" width="700">
+
+The service started successfully and began communicating with the Wazuh Manager over port 1514.
 
 ---
 
 ### 2.6 Verify Telemetry & Log Flow
 
-Once the agent is active, generate test events via Sysmon and other system activity to validate telemetry:
-
-<img src="screenshots/telemetry/telemetry_log_flow_verified.png" width="700">
-
-**Validation ensures:**
-
-* Windows endpoint logs are successfully forwarded to the SOC server
-* Wazuh Manager receives and indexes the events
-* Events are visible in the Wazuh Dashboard under the agent’s logs
-
----
-
-# 3. Sysmon Configuration for Enhanced Endpoint Telemetry
-
-## Objective
-
-To improve endpoint visibility, **Sysmon (System Monitor)** was configured on the Windows endpoint to generate detailed telemetry for process execution, network connections, and system activity.
-
-These logs are forwarded to the **Wazuh SIEM**, enabling deeper monitoring and improving the ability to detect suspicious behavior during attack simulations.
-
----
-
-## Why Sysmon Is Important
-
-Default Windows logging provides limited visibility into system activity. Sysmon enhances endpoint monitoring by generating detailed event logs related to system behavior.
-
-Key telemetry provided by Sysmon includes:
-
-* Process creation events
-* Network connections initiated by processes
-* File creation activity
-* Registry modifications
-* Driver loading events
-* Suspicious command execution
-
-This level of visibility is commonly used in **SOC environments for threat detection and incident investigation**.
-
----
-
-## Sysmon Deployment
-
-Sysmon was installed on the Windows endpoint and configured using a structured configuration file designed for security monitoring. The configuration enables logging for important system activities while filtering out unnecessary noise.
-
-Once configured, Sysmon begins generating telemetry events that can be viewed through **Windows Event Viewer**.
-
-### Verifying Sysmon Event Logs
-
-Sysmon events can be observed in Windows under the following log location:
-
-```
-Applications and Services Logs
-Microsoft
-Windows
-Sysmon
-Operational
-```
-
-These logs contain detailed event records such as process creation, network connections, and other monitored system activities.
-
----
-
-## Integration with Wazuh
-
-After Sysmon was configured, the Windows endpoint continued forwarding logs to the **Wazuh SIEM server** through the installed Wazuh agent.
-
-This allows Sysmon telemetry to be ingested by the SIEM platform, where it can be:
-
-* Indexed and stored
-* Monitored through the Wazuh dashboard
-* Correlated with other security events
-* Used for detection rule triggering
-
-The integration enables centralized monitoring of endpoint activity from the SOC server.
-
----
-
-## Telemetry Validation
-
-To confirm that endpoint telemetry was successfully reaching the SIEM, events generated by the Windows system were observed within the **Wazuh Security Events dashboard**.
-
-This confirmed that:
-
-* The Windows agent was successfully forwarding logs
-* Sysmon telemetry was being processed by the Wazuh manager
-* Events were available for monitoring and detection
+With the agent active, the Wazuh Dashboard was checked to confirm that Windows event logs were successfully arriving at the SOC server. This end-to-end check validates the full pipeline — from Windows endpoint through the agent to the Wazuh Manager and into the Dashboard.
 
 <img src="screenshots/wazuh/telemetry_log_flow_verified.png" width="700">
 
----
+**Validation confirmed:**
 
-## Outcome
+* Windows endpoint logs are successfully forwarded to the SOC server
+* Wazuh Manager is receiving and indexing the events
+* Events are visible in the Wazuh Dashboard under the Windows agent
 
-With Sysmon properly configured and integrated with Wazuh, the SOC lab now has **enhanced endpoint visibility**.
-
-This improved telemetry will be used in the following phases of the project to:
-
-* simulate attack activity
-* observe generated security alerts
-* analyze malicious behavior
-* practice SOC alert investigation workflows
+With the agent pipeline fully operational, the environment is ready for Sysmon integration.
 
 ---
 
+## 3. Sysmon Configuration for Enhanced Endpoint Telemetry
 
+### Objective
 
+With the Windows agent successfully forwarding logs, the next step is dramatically improving the **quality** of that telemetry. Out of the box, Windows Event Logs provide basic visibility — login events, service changes, audit logs. But they miss the detail that matters most in a SOC environment: exactly what processes ran, what commands were executed, what network connections were made, and what registry keys were touched.
 
+**Sysmon (System Monitor)** fills that gap. Once configured, it becomes the primary source of high-fidelity endpoint telemetry — the kind of data that makes the difference between detecting an attack and missing it entirely.
+
+---
+
+### Why Sysmon Is Important
+
+Default Windows logging provides limited visibility into system activity. Sysmon enhances endpoint monitoring by generating detailed event logs tied to specific system behaviors that attackers cannot easily hide.
+
+| Sysmon Event | Event ID | What It Captures |
+|---|---|---|
+| Process Creation | 1 | Every process launched, its command line, and parent process |
+| Network Connection | 3 | Outbound connections with source/destination IP and port |
+| File Creation | 11 | Files written to disk with full path |
+| Registry Modification | 13 | Registry value changes — key for persistence detection |
+| Driver Load | 6 | Drivers loaded into the kernel |
+| Process Injection | 8 | CreateRemoteThread calls between processes |
+
+This level of visibility is what separates basic log collection from **real endpoint detection capability** — and is the standard telemetry source used by SOC teams in enterprise environments.
+
+---
+
+### 3.1 Sysmon Configuration File
+
+Installing Sysmon alone is not enough — without a configuration file, it either logs everything (creating enormous noise) or almost nothing useful. A well-structured config defines exactly what to capture and what to filter out.
+
+Sysmon was configured using the **SwiftOnSecurity Sysmon configuration** — one of the most widely adopted open-source Sysmon configs in the security community. It is actively maintained and used as a baseline in real SOC environments.
+
+The config was downloaded directly from the official SwiftOnSecurity GitHub repository:
+
+```
+https://github.com/SwiftOnSecurity/sysmon-config
+```
+
+This configuration provides a well-balanced ruleset that:
+
+* Enables logging for all high-value security events
+* Filters low-value noise to reduce unnecessary log volume
+* Covers process creation, network connections, registry changes, and more
+* Is regularly updated to reflect current threat detection best practices
+
+<img src="screenshots/windows/sysmon_config_downloaded.png" width="700">
+
+---
+
+### 3.2 Applying the Configuration
+
+The configuration file was applied to Sysmon using an elevated **PowerShell** session. The `-c` flag instructs Sysmon to load the specified configuration file and immediately begin logging according to its ruleset:
+
+```powershell
+sysmon64.exe -c sysmonconfig.xml
+```
+
+<img src="screenshots/windows/sysmon_configuration_applied.png" width="700">
+
+Sysmon confirmed the configuration was accepted and began generating telemetry events immediately. No restart was required — the new ruleset takes effect in real time.
+
+---
+
+### 3.3 Verifying Sysmon Event Logs in Event Viewer
+
+Once the configuration was applied, Sysmon telemetry was verified directly in **Windows Event Viewer** before checking Wazuh. This two-step validation approach confirms whether an issue lies on the Windows side or the forwarding side — making troubleshooting significantly easier.
+
+Sysmon events are located under:
+
+```
+Applications and Services Logs
+└── Microsoft
+    └── Windows
+        └── Sysmon
+            └── Operational
+```
+
+<img src="screenshots/windows/sysmon_event_logs_visible.png" width="700">
+
+**Event ID 1 (Process Creation)** events were immediately visible, generated by normal system activity — confirming Sysmon is actively monitoring the endpoint and the configuration was applied correctly.
+
+---
+
+### 3.4 Integration with Wazuh
+
+With Sysmon generating telemetry, the existing Wazuh agent on the Windows endpoint automatically picks up the Sysmon event channel and forwards those logs to the SOC server alongside standard Windows Event Logs.
+
+This means no additional agent configuration was required — the Wazuh agent already monitors the Windows Event Log channels, and Sysmon writes directly into the Windows event log infrastructure under its own dedicated channel.
+
+Once ingested, Sysmon telemetry can be:
+
+* **Indexed and stored** in the Wazuh Indexer (OpenSearch)
+* **Monitored** through the Wazuh Security Events dashboard
+* **Correlated** with other security events across agents
+* **Matched** against Wazuh detection rules for alert generation
+
+This gives the SOC server complete visibility into endpoint-level activity — from basic Windows events through to detailed process execution chains.
+
+---
+
+### 3.5 Telemetry Validation
+
+To confirm that Sysmon telemetry was successfully reaching the SIEM, events generated on the Windows endpoint were traced through to the **Wazuh Security Events dashboard**.
+
+<img src="screenshots/windows/sysmon_logs_visible_wazuh.png" width="700">
+
+**Validation confirmed:**
+
+* Sysmon events are being forwarded by the Windows Wazuh agent
+* The Wazuh Manager is receiving and processing Sysmon telemetry
+* Events are indexed and visible in the dashboard with correct attribution
+* The full pipeline from endpoint activity to SIEM visibility is operational
+
+---
+
+### Outcome
+
+With Sysmon properly configured and integrated with Wazuh, the SOC lab now has **significantly enhanced Windows endpoint visibility** — moving beyond basic event logs into detailed process-level telemetry.
+
+| Capability | Before Sysmon | After Sysmon |
+|---|---|---|
+| Process execution visibility | ❌ Limited | ✅ Full command-line detail |
+| Network connection tracking | ❌ None | ✅ Per-process with IP/port |
+| Registry change detection | ❌ None | ✅ Key-level granularity |
+| Parent-child process chains | ❌ None | ✅ Full lineage tracking |
+| File creation events | ❌ None | ✅ Full path logging |
+
+This telemetry foundation will be used in **Phase 3** to simulate real attack techniques on the Windows endpoint, generate detectable events, and practice SOC analyst investigation workflows.
+
+---
+
+<p align="center">
+  <sub>
+    Part of the <strong>SOC Home Lab Series</strong> by <a href="https://github.com/kripy17">Krish Patel</a><br><br>
+    <a href="../phase-1-wazuh-deployment">Phase 1: SIEM Infrastructure</a> ✅ &nbsp;|&nbsp; <a href="../phase-2-windows-sysmon
+">Phase 2: Windows + Sysmon ✅ &nbsp;|&nbsp; Phase 3: Attack Simulation 📋
+  </sub>
+</p>
