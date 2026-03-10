@@ -1,4 +1,7 @@
 # SOC Home Lab – Phase 1: SIEM Infrastructure & Endpoint Monitoring
+
+> 🎯 **Phase 1 Complete** — Wazuh SIEM deployed · Kali Linux endpoint onboarded · 4 attack simulations validated · Full log pipeline operational
+
 *Infrastructure Deployment | Log Pipeline Validation | Wazuh SIEM*
 
 <p align="center">
@@ -8,16 +11,26 @@
 [![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-0056D2?style=for-the-badge&logo=wazuh&logoColor=white)](https://wazuh.com/)
 [![VMware](https://img.shields.io/badge/VMware-Workstation-607078?style=for-the-badge&logo=vmware&logoColor=white)](https://www.vmware.com/)
 [![Phase](https://img.shields.io/badge/Series-Phase_1_of_3-8B0000?style=for-the-badge)](https://github.com/kripy17)
-[![Status](https://img.shields.io/badge/Status-Complete-2ea44f?style=for-the-badge)](https://github.com/kripy17)
+[![Status](https://img.shields.io/badge/Status-Complete-0056D2?style=for-the-badge)](https://github.com/kripy17)
 
 </p>
+
+---
+
+<div align="center">
+
+| 🖥️ VMs Deployed | 🔧 SIEM Stack | 🔔 Simulations Run | ✅ Detections Confirmed | 🔗 Pipeline Status |
+|:---:|:---:|:---:|:---:|:---:|
+| 2 (Ubuntu + Kali) | Wazuh All-in-One | 4 | 4 | ✅ Operational |
+
+</div>
 
 ---
 
 ## 📋 Table of Contents
 
 <details open>
-<summary><strong>🏗️ Phase 1 — Infrastructure Setup</strong></summary>
+<summary>📸 <strong>🏗️ Infrastructure Setup</strong></summary>
 
 &nbsp;&nbsp;&nbsp;&nbsp;`01` [Project Overview](#1-project-overview)  
 &nbsp;&nbsp;&nbsp;&nbsp;`02` [Lab Objectives](#2-lab-objectives)  
@@ -28,7 +41,7 @@
 </details>
 
 <details open>
-<summary><strong>🖥️ Phase 2 — SIEM Deployment</strong></summary>
+<summary>📸 <strong>🖥️ SIEM Deployment</strong></summary>
 
 &nbsp;&nbsp;&nbsp;&nbsp;`06` [Server Hardening & Initial Setup](#6-server-hardening--initial-setup)  
 &nbsp;&nbsp;&nbsp;&nbsp;`07` [Wazuh SIEM Installation & Configuration](#7-wazuh-siem-installation--configuration)  
@@ -37,7 +50,7 @@
 </details>
 
 <details open>
-<summary><strong>🧪 Phase 3 — Validation & Findings</strong></summary>
+<summary>📸 <strong>🧪 Validation & Findings</strong></summary>
 
 &nbsp;&nbsp;&nbsp;&nbsp;`09` [Attack Simulation & Detection Validation](#9-attack-simulation--detection-validation)  
 &nbsp;&nbsp;&nbsp;&nbsp;`10` [Lessons Learned, Limitations & Future Improvements](#10-lessons-learned-limitations--future-improvements)  
@@ -98,7 +111,12 @@ The **Ubuntu Server** acts as the centralized SOC node running the Wazuh Manager
 
 The diagram below illustrates how these components connect and communicate within the lab:
 
-<img src="screenshots/ubuntu/Architecture_Flow.png" width="800">
+<details>
+<summary>📸 <strong>Lab architecture flow diagram</strong></summary>
+
+<img src="screenshots/ubuntu/Architecture_Flow.png" width="900">
+
+</details>
 
 ### Design Considerations
 
@@ -109,8 +127,6 @@ This architecture was intentionally built to:
 * Simulate centralized log aggregation
 * Support realistic endpoint onboarding workflows
 * Provide clear visibility into log ingestion and alert generation
-
-Detection engineering, attack simulation, and multi-endpoint expansion will be implemented in future phases.
 
 ---
 
@@ -127,9 +143,12 @@ All VMs are configured using **NAT networking mode** within VMware Workstation, 
 | Gateway | Provided by VMware NAT service |
 | Internet Access | Routed through host system |
 
-The screenshot below shows the VMware virtual network configuration confirming the NAT subnet is correctly defined:
+<details>
+<summary>📸 <strong>VMware NAT virtual network configuration</strong></summary>
 
-<img src="screenshots/ubuntu/nat_config.png" width="600">
+<img src="screenshots/ubuntu/nat_config.png" width="900">
+
+</details>
 
 ### Why NAT Was Chosen
 
@@ -139,8 +158,6 @@ The screenshot below shows the VMware virtual network configuration confirming t
 * Clean separation from the physical LAN
 
 ### Required Communication Paths
-
-For the SOC pipeline to function, the following paths must be active:
 
 | Path | Purpose |
 |---|---|
@@ -169,27 +186,39 @@ The primary SOC server runs **Ubuntu Server 22.04 LTS** — selected for its lon
 | Disk | 40 GB |
 | Network | VMnet8 (NAT) |
 
-The VM was configured conservatively to support the Wazuh all-in-one stack within an 8GB host limit while keeping indexing and dashboard services stable. The following screenshot confirms resource allocation in VMware before the VM was started:
+<details>
+<summary>📸 <strong>VMware VM resource allocation settings</strong></summary>
 
-<img src="screenshots/ubuntu/vm_settings.png" width="700">
+<img src="screenshots/ubuntu/vm_settings.png" width="900">
+
+</details>
 
 ### 5.4 Disk Allocation During Installation
 
-Proper disk allocation is critical for SIEM deployments — indexing services and log retention consume significant storage over time. The screenshot below shows disk configuration during Ubuntu installation, confirming the full 40GB allocation was correctly recognized:
+<details>
+<summary>📸 <strong>Disk configuration during Ubuntu installation</strong></summary>
 
-<img src="screenshots/ubuntu/storage_config.png" width="700">
+<img src="screenshots/ubuntu/storage_config.png" width="900">
+
+</details>
 
 ### 5.5 SSH Configuration
 
-OpenSSH Server was enabled during installation to allow secure remote access to the SOC node. This removes the dependency on the VMware console and enables cleaner remote administration throughout the project:
+<details>
+<summary>📸 <strong>OpenSSH Server enabled during installation</strong></summary>
 
-<img src="screenshots/ubuntu/ssh_config.png" width="700">
+<img src="screenshots/ubuntu/ssh_config.png" width="900">
+
+</details>
 
 ### 5.6 System Verification After Installation
 
-Post-installation, system details were verified to confirm the correct Ubuntu version, proper hostname, and a valid IP assignment within the NAT subnet. This baseline check ensures the server is ready before any hardening or service installation begins:
+<details>
+<summary>📸 <strong>Post-installation system verification</strong></summary>
 
-<img src="screenshots/ubuntu/system_check.png" width="800">
+<img src="screenshots/ubuntu/system_check.png" width="900">
+
+</details>
 
 ---
 
@@ -199,66 +228,80 @@ Before deploying Wazuh, the Ubuntu SOC server was updated, cleaned, and minimall
 
 ### 6.1 System Update and Package Upgrade
 
-The package index was refreshed and all installed packages were upgraded to their latest stable versions. This ensures security patches are applied and dependency consistency is maintained before SIEM installation:
-
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-The output below confirms the update and upgrade completed without errors:
+<details>
+<summary>📸 <strong>System update and upgrade completed</strong></summary>
 
-<img src="screenshots/ubuntu/update_complete.png" width="800">
+<img src="screenshots/ubuntu/update_complete.png" width="900">
+
+</details>
 
 ### 6.2 Removal of Unnecessary Snap Packages
 
-To reduce system overhead and minimize the attack surface, unnecessary snap packages were reviewed and removed. This keeps the server profile lightweight and reduces background services competing for the limited 4GB RAM allocation:
+<details>
+<summary>📸 <strong>Unnecessary snap packages removed</strong></summary>
 
-<img src="screenshots/ubuntu/useless_snaps.png" width="800">
+<img src="screenshots/ubuntu/useless_snaps.png" width="900">
+
+</details>
 
 ### 6.3 Firewall Baseline Configuration (UFW)
-
-UFW was enabled with a default-deny inbound policy. At this stage only SSH was permitted, following a minimal exposure approach — additional ports will be opened only when specific services require them:
 
 ```bash
 sudo ufw allow OpenSSH
 sudo ufw enable
 ```
 
-The screenshot below confirms UFW is active and only SSH is currently permitted:
+<details>
+<summary>📸 <strong>UFW active — SSH only permitted</strong></summary>
 
-<img src="screenshots/ubuntu/ufw_status.png" width="800">
+<img src="screenshots/ubuntu/ufw_status.png" width="900">
+
+</details>
 
 ### 6.4 SSH Service Verification
-
-The SSH service was confirmed as active and running before proceeding. This ensures remote access is available throughout the rest of the deployment without needing to fall back to the VMware console:
 
 ```bash
 sudo systemctl status ssh
 ```
 
-<img src="screenshots/ubuntu/ssh_status.png" width="800">
+<details>
+<summary>📸 <strong>SSH service confirmed active and running</strong></summary>
+
+<img src="screenshots/ubuntu/ssh_status.png" width="900">
+
+</details>
 
 ### 6.5 Network Configuration Verification
-
-The server's IP address was verified to confirm it received a valid NAT subnet assignment. This IP will be used throughout the project for agent configuration and dashboard access:
 
 ```bash
 ip a
 ```
 
-<img src="screenshots/ubuntu/system_check.png" width="800">
+<details>
+<summary>📸 <strong>Server IP confirmed within NAT subnet</strong></summary>
+
+<img src="screenshots/ubuntu/system_check.png" width="900">
+
+</details>
 
 ### 6.6 Resource Validation
-
-Available memory and disk space were checked to confirm the server can handle Wazuh's indexing and log storage requirements before installation begins:
 
 ```bash
 free -h
 df -h
 ```
 
-<img src="screenshots/ubuntu/resource_check.png" width="800">
+<details>
+<summary>📸 <strong>Memory and disk resources verified</strong></summary>
+
+<img src="screenshots/ubuntu/resource_check.png" width="900">
+
+</details>
 
 ### Hardening Summary
 
@@ -275,42 +318,43 @@ df -h
 
 ## 7. Wazuh SIEM Installation & Configuration
 
-With a hardened baseline in place, the Wazuh all-in-one SIEM stack was installed on the Ubuntu SOC server. This includes the Wazuh Manager, Indexer (OpenSearch), Filebeat, and Dashboard — all deployed as a single unified stack to work within the lab's resource constraints.
-
 ### 7.1 Installation Script Download
-
-The official Wazuh installation script was pulled directly from the Wazuh repository. Using the official script ensures correct dependency resolution and component configuration:
 
 ```bash
 curl -O https://packages.wazuh.com/4.14/wazuh-install.sh
 ```
 
-The screenshot below confirms the script was successfully downloaded:
+<details>
+<summary>📸 <strong>Wazuh installation script downloaded</strong></summary>
 
-<img src="screenshots/wazuh/wazuh_script.png" width="800">
+<img src="screenshots/wazuh/wazuh_script.png" width="900">
+
+</details>
 
 ### 7.2 Executing the All-in-One Installation
-
-The script was made executable and run in all-in-one mode. This single command handles the full stack — Manager, OpenSearch Indexer, Filebeat, and Dashboard with SSL configuration:
 
 ```bash
 chmod +x wazuh-install.sh
 sudo ./wazuh-install.sh -a
 ```
 
-Installation progress is shown below. The process takes several minutes as each component is installed and configured sequentially:
+<details>
+<summary>📸 <strong>Wazuh all-in-one installation in progress</strong></summary>
 
-<img src="screenshots/wazuh/wazuh_install_start.png" width="800">
+<img src="screenshots/wazuh/wazuh_install_start.png" width="900">
+
+</details>
 
 ### 7.3 Dashboard Credential Generation
 
-Upon completion, the installation script outputs default credentials for the Wazuh Dashboard. These are required for the initial HTTPS login and were securely noted before proceeding:
+<details>
+<summary>📸 <strong>Dashboard credentials generated on completion</strong></summary>
 
-<img src="screenshots/wazuh/wazuh_dashboard_credentials.png" width="800">
+<img src="screenshots/wazuh/wazuh_dashboard_credentials.png" width="900">
+
+</details>
 
 ### 7.4 Service Verification
-
-All four Wazuh services were checked individually to confirm they started correctly. A failed or degraded service at this stage would indicate a configuration or resource issue requiring investigation before continuing:
 
 ```bash
 sudo systemctl status wazuh-manager
@@ -319,43 +363,45 @@ sudo systemctl status wazuh-indexer
 sudo systemctl status filebeat
 ```
 
-All services returned `active (running)` as shown below:
+<details>
+<summary>📸 <strong>All Wazuh services active and running</strong></summary>
 
-<img src="screenshots/wazuh/wazuh_services_running.png" width="800">
+<img src="screenshots/wazuh/wazuh_services_running.png" width="900">
+
+</details>
 
 ### 7.5 Firewall Rule Expansion
-
-With the dashboard now running, port 443 was opened to allow HTTPS access from the host browser. This follows the incremental exposure approach established during hardening — ports are only opened when a specific service requires them:
 
 ```bash
 sudo ufw allow 443/tcp
 ```
 
-The updated firewall status confirms port 443 is now permitted alongside SSH:
+<details>
+<summary>📸 <strong>Port 443 opened — UFW rules updated</strong></summary>
 
-<img src="screenshots/wazuh/wazuh_port443_open.png" width="800">
+<img src="screenshots/wazuh/wazuh_port443_open.png" width="900">
+
+</details>
 
 ### 7.6 Dashboard Access & Verification
 
-The Wazuh Dashboard was accessed from the host machine using the server's NAT IP. A browser warning appeared due to the self-signed SSL certificate and was bypassed for lab purposes:
+<details>
+<summary>📸 <strong>Wazuh Dashboard login page — reachable over HTTPS</strong></summary>
 
-```
-https://<server-ip_address>
-```
+<img src="screenshots/wazuh/wazuh_dashboard_login.png" width="900">
 
-The login page below confirms the dashboard is reachable and the web service is responding correctly:
+</details>
 
-<img src="screenshots/wazuh/wazuh_dashboard_login.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh Dashboard home — all components operational</strong></summary>
 
-After logging in with the generated credentials, the dashboard home interface confirmed that the Manager, Indexer, and all core components are operational and communicating:
+<img src="screenshots/wazuh/wazuh_dashboard_home.png" width="900">
 
-<img src="screenshots/wazuh/wazuh_dashboard_home.png" width="800">
+</details>
 
 ---
 
 ## 8. Agent Deployment & Log Onboarding
-
-With the SIEM stack confirmed operational, the next step is onboarding a monitored endpoint. A Kali Linux VM was provisioned and enrolled into the Wazuh infrastructure — mirroring real SOC workflows where endpoints must be registered and validated before telemetry begins flowing.
 
 ### 8.1 Kali Linux VM Configuration
 
@@ -366,35 +412,35 @@ With the SIEM stack confirmed operational, the next step is onboarding a monitor
 | Disk | 30 GB |
 | Network | VMnet8 (NAT) |
 
-The Kali VM was deliberately kept lightweight at 2GB RAM to leave sufficient headroom for the Wazuh SOC server operating at 4GB. The hardware configuration in VMware is shown below:
+<details>
+<summary>📸 <strong>Kali Linux VM hardware configuration in VMware</strong></summary>
 
-<img src="screenshots/agent/kali_vm_hardware_config.png" width="800">
+<img src="screenshots/agent/kali_vm_hardware_config.png" width="900">
+
+</details>
 
 ### 8.2 Network Connectivity Verification
 
-Before installing the agent, internal network connectivity between the two VMs was validated. Without this, agent registration will silently fail or time out — a step that's easy to skip and painful to debug later.
-
-The Kali IP address was confirmed first to ensure it received a valid NAT subnet assignment:
-
 ```bash
 ip a
-```
-
-<img src="screenshots/agent/kali_ip_address.png" width="800">
-
-A ping test to the Wazuh Manager IP then confirmed that both VMs can communicate over the internal network:
-
-```bash
 ping <server-ip_address>
 ```
 
-Successful ICMP responses below confirm the path is open and no firewall is blocking at the network layer:
+<details>
+<summary>📸 <strong>Kali IP address confirmed within NAT subnet</strong></summary>
 
-<img src="screenshots/agent/kali_ping_manager_success.png" width="800">
+<img src="screenshots/agent/kali_ip_address.png" width="900">
+
+</details>
+
+<details>
+<summary>📸 <strong>Ping to Wazuh Manager — ICMP responses confirm connectivity</strong></summary>
+
+<img src="screenshots/agent/kali_ping_manager_success.png" width="900">
+
+</details>
 
 ### 8.3 Installing the Wazuh Agent
-
-The Wazuh agent was installed on Kali using the official repository. The Manager IP is passed in as an environment variable during installation so the agent knows where to register:
 
 ```bash
 # Add GPG key
@@ -412,113 +458,126 @@ sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
 ```
 
-The GPG key addition is shown below — this authenticates the Wazuh package repository and prevents unsigned packages from being installed:
+<details>
+<summary>📸 <strong>GPG key added — Wazuh repository authenticated</strong></summary>
 
-<img src="screenshots/agent/wazuh_gpg_key_added.png" width="800">
+<img src="screenshots/agent/wazuh_gpg_key_added.png" width="900">
 
-The repository was then added to the apt sources list, making Wazuh packages available for installation:
+</details>
 
-<img src="screenshots/agent/wazuh_repo_added.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh repository added to apt sources</strong></summary>
 
-The agent installation output below confirms the package downloaded, installed, and configured without errors:
+<img src="screenshots/agent/wazuh_repo_added.png" width="900">
 
-<img src="screenshots/agent/wazuh_agent_installation.png" width="800">
+</details>
 
-Finally, the agent service status was checked to confirm it started correctly and is attempting to communicate with the manager:
+<details>
+<summary>📸 <strong>Wazuh agent installed successfully</strong></summary>
 
-<img src="screenshots/agent/wazuh_agent_service_running.png" width="800">
+<img src="screenshots/agent/wazuh_agent_installation.png" width="900">
+
+</details>
+
+<details>
+<summary>📸 <strong>Wazuh agent service running on Kali endpoint</strong></summary>
+
+<img src="screenshots/agent/wazuh_agent_service_running.png" width="900">
+
+</details>
 
 ### 8.4 Secure Agent Registration (Key-Based Authentication)
-
-Wazuh uses key-based authentication to establish a trusted relationship between agents and the manager. This prevents unauthorized endpoints from injecting data into the SIEM.
-
-On the Ubuntu SOC server, a new agent entry was created for the Kali endpoint:
 
 ```bash
 sudo /var/ossec/bin/manage_agents
 ```
 
-The screenshot below shows the agent being added and a unique authentication key being generated:
+<details>
+<summary>📸 <strong>Kali agent added — authentication key generated</strong></summary>
 
-<img src="screenshots/agent/manage_agents_add_kali.png" width="800">
+<img src="screenshots/agent/manage_agents_add_kali.png" width="900">
 
-That key was then imported on the Kali machine using the same utility, completing the mutual authentication handshake. The screenshot below shows the key import step on the endpoint side:
+</details>
 
-<img src="screenshots/agent/kali_import_agent_key.png" width="800">
+<details>
+<summary>📸 <strong>Authentication key imported on Kali endpoint</strong></summary>
 
-After importing the key and restarting the agent, the manager was queried to confirm the registration was successful:
+<img src="screenshots/agent/kali_import_agent_key.png" width="900">
 
-```bash
-sudo /var/ossec/bin/agent_control -l
-```
+</details>
 
-The output below confirms the agent was assigned an ID, its status is **Active**, and secure communication has been established:
+<details>
+<summary>📸 <strong>Agent control list — Kali agent Active and communicating</strong></summary>
 
-<img src="screenshots/agent/agent_control_list_output.png" width="800">
+<img src="screenshots/agent/agent_control_list_output.png" width="900">
+
+</details>
 
 ### 8.5 Firewall Validation for Agent Communication
-
-During initial connectivity testing, the agent was unable to complete registration. Investigation confirmed that ports 1514 and 1515 were blocked by UFW on the SOC server. These ports are required for agent data transmission and secure registration respectively:
 
 ```bash
 sudo ufw allow 1514
 sudo ufw allow 1515
 ```
 
-The screenshot below shows the updated firewall rules after the ports were opened, resolving the connectivity issue:
+<details>
+<summary>📸 <strong>Ports 1514 and 1515 opened — agent connectivity restored</strong></summary>
 
-<img src="screenshots/agent/if_server_firewall_blocks_port_1514.png" width="800">
+<img src="screenshots/agent/if_server_firewall_blocks_port_1514.png" width="900">
+
+</details>
 
 ### 8.6 Dashboard Agent Verification
 
-With the agent registered and communicating, the Wazuh Dashboard was checked to confirm the endpoint appeared correctly. Under **Wazuh → Agents**, the `kali-linux` endpoint was visible with a status of **Active** and keepalive signals being received:
+<details>
+<summary>📸 <strong>Kali agent visible in Wazuh Dashboard — status Active</strong></summary>
 
-<img src="screenshots/agent/wazuh_dashboard_agent_active.png" width="800">
+<img src="screenshots/agent/wazuh_dashboard_agent_active.png" width="900">
+
+</details>
 
 ### 8.7 Log Generation & Event Validation
 
-To confirm the full pipeline — from endpoint activity through to dashboard visibility — controlled events were generated on the Kali machine and traced end-to-end.
-
-Authentication-related events were triggered first using invalid user attempts, as these are reliably captured by PAM and forwarded by the agent:
-
 ```bash
 sudo su invaliduser
-sudo su invaliduser
-```
-
-<img src="screenshots/agent/kali_auth_log_generation.png" width="800">
-
-A package installation was also performed to generate system-level activity logs, confirming that package management events are captured alongside authentication events:
-
-```bash
 sudo apt install sl -y
 ```
 
-<img src="screenshots/agent/kali_package_install_log.png" width="800">
+<details>
+<summary>📸 <strong>Authentication events generated on Kali endpoint</strong></summary>
 
-Both event types were then located in the Wazuh Dashboard under Security Events, filtered to the `kali-linux` agent. The first screenshot shows the event list view confirming logs are being received and indexed:
+<img src="screenshots/agent/kali_auth_log_generation.png" width="900">
 
-<img src="screenshots/agent/wazuh_event_validation_kali1.png" width="800">
+</details>
 
-The second screenshot shows an expanded event detail, confirming rule matching, severity classification, and accurate timestamp correlation between the endpoint and the SIEM:
+<details>
+<summary>📸 <strong>Package install log generated on Kali endpoint</strong></summary>
 
-<img src="screenshots/agent/wazuh_event_validation_kali2.png" width="800">
+<img src="screenshots/agent/kali_package_install_log.png" width="900">
 
-The log pipeline is fully validated — events generated on the endpoint are collected, forwarded, indexed, rule-matched, and visible in the dashboard in real time.
+</details>
+
+<details>
+<summary>📸 <strong>Wazuh Dashboard — events received and indexed from Kali agent</strong></summary>
+
+<img src="screenshots/agent/wazuh_event_validation_kali1.png" width="900">
+
+</details>
+
+<details>
+<summary>📸 <strong>Wazuh Dashboard — expanded event detail with rule match and timestamp</strong></summary>
+
+<img src="screenshots/agent/wazuh_event_validation_kali2.png" width="900">
+
+</details>
 
 ---
 
 ## 9. Attack Simulation & Detection Validation
 
-With the SIEM infrastructure operational and the log pipeline validated, controlled activity simulations were conducted on the Kali endpoint to confirm that the Wazuh detection engine responds correctly to real security-relevant events. The objective here is **validation of monitoring coverage** — confirming that the SIEM detects, classifies, and surfaces the right alerts, not just that logs are being received.
-
----
-
 ### 9.1 Authentication Abuse Simulation
 
 **Objective:** Confirm that repeated failed authentication attempts generate alerts and are correctly classified by Wazuh.
-
-Repeated invalid sudo attempts were executed on the Kali endpoint to generate a burst of authentication failure events:
 
 ```bash
 sudo su invaliduser
@@ -526,13 +585,19 @@ sudo su invaliduser
 sudo su invaliduser
 ```
 
-The terminal output below shows the failed attempts as they occurred on the endpoint:
+<details>
+<summary>📸 <strong>Failed authentication attempts executed on Kali</strong></summary>
 
-<img src="screenshots/attacks/auth_failed_generation.png" width="800">
+<img src="screenshots/attacks/auth_failed_generation.png" width="900">
 
-In the Wazuh Dashboard, alerts were generated for the `kali-linux` agent within seconds. The screenshot below confirms the rule was triggered, the correct agent was attributed, a severity level was assigned, and the timestamps align accurately with when the attempts were made:
+</details>
 
-<img src="screenshots/attacks/auth_failed_alert.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh alert — authentication abuse detected</strong></summary>
+
+<img src="screenshots/attacks/auth_failed_alert.png" width="900">
+
+</details>
 
 ---
 
@@ -540,55 +605,69 @@ In the Wazuh Dashboard, alerts were generated for the `kali-linux` agent within 
 
 **Objective:** Validate that privileged command execution is logged and surfaced as a security event.
 
-Sudo enumeration and root session activity were performed to simulate privilege-related behavior:
-
 ```bash
 sudo -l
 sudo su -
 exit
 ```
 
-The execution is shown below as it appeared on the Kali endpoint:
+<details>
+<summary>📸 <strong>Privilege escalation commands executed on Kali</strong></summary>
 
-<img src="screenshots/attacks/privilege_escalation_generation.png" width="800">
+<img src="screenshots/attacks/privilege_escalation_generation.png" width="900">
 
-The Wazuh Dashboard generated corresponding alerts for the privileged activity. The screenshot below shows the alert detail, including the rule triggered, the severity assigned, and the agent attribution:
+</details>
 
-<img src="screenshots/attacks/privilege_escalation_alert.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh alert — privilege escalation activity detected</strong></summary>
+
+<img src="screenshots/attacks/privilege_escalation_alert.png" width="900">
+
+</details>
 
 ---
 
 ### 9.3 Suspicious Tool Installation
 
-**Objective:** Confirm that package installation events are monitored and logged — relevant in scenarios where an attacker installs tools post-compromise.
-
-A network scanning tool was installed on the Kali endpoint to generate package management activity:
+**Objective:** Confirm that package installation events are monitored and logged.
 
 ```bash
 sudo apt install nmap -y
 ```
 
-The terminal output below shows the installation as it ran on the endpoint:
+<details>
+<summary>📸 <strong>Nmap installation executed on Kali endpoint</strong></summary>
 
-<img src="screenshots/attacks/nmap_install_generation.png" width="800">
+<img src="screenshots/attacks/nmap_install_generation.png" width="900">
 
-Wazuh logged the package activity and surfaced it as a system event in the dashboard. The screenshot below confirms the event was captured, indexed, and correctly attributed to the `kali-linux` agent:
+</details>
 
-<img src="screenshots/attacks/tool_installation_alert.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh alert — suspicious tool installation detected</strong></summary>
+
+<img src="screenshots/attacks/tool_installation_alert.png" width="900">
+
+</details>
 
 ---
 
 ### 9.4 File Integrity Monitoring (FIM) Validation
 
-**Objective:** Verify that Wazuh's File Integrity Monitoring detects and alerts on modifications to monitored files.
+**Objective:** Verify that Wazuh's File Integrity Monitoring detects modifications to monitored files.
 
-The `/etc/hosts` file was modified to simulate an unauthorized change to a critical system file:
+<details>
+<summary>📸 <strong>/etc/hosts modified — FIM trigger generated</strong></summary>
 
-<img src="screenshots/attacks/file_modification_generation.png" width="800">
+<img src="screenshots/attacks/file_modification_generation.png" width="900">
 
-Wazuh FIM detected the change and generated an alert. The screenshot below shows the FIM alert in the dashboard, confirming the exact file path was monitored, the change was detected in near real-time, and the event was correctly attributed to the `kali-linux` agent with an accurate timestamp:
+</details>
 
-<img src="screenshots/attacks/file_integrity_alert.png" width="800">
+<details>
+<summary>📸 <strong>Wazuh FIM alert — unauthorized file modification detected</strong></summary>
+
+<img src="screenshots/attacks/file_integrity_alert.png" width="900">
+
+</details>
 
 ---
 
@@ -600,8 +679,6 @@ Wazuh FIM detected the change and generated an alert. The screenshot below shows
 | Privilege escalation | ✅ | ✅ | ✅ | ✅ |
 | Suspicious tool install | ✅ | ✅ | ✅ | ✅ |
 | File integrity violation | ✅ | ✅ | ✅ | ✅ |
-
-All four simulations confirmed that the monitoring pipeline is functioning correctly from endpoint activity through to dashboard alert visibility.
 
 ---
 
@@ -644,7 +721,7 @@ The agent registration issue caused by blocked ports 1514 and 1515 was a practic
 | No EDR-level telemetry | Kernel-level and behavioural detection not included |
 | Self-signed SSL certificate | Not production-ready; browser warnings in all sessions |
 
-### 10.6 Planned Future Improvements
+### 10.6 Future Improvements
 
 | Enhancement | Purpose |
 |---|---|
@@ -679,6 +756,6 @@ The environment provides a solid and documented foundation for advanced detectio
     Part of the <strong>SOC Home Lab Series</strong> by <a href="https://github.com/kripy17">Krish Patel</a><br><br>
     <a href="../phase-1-wazuh-deployment">Phase 1: SIEM Infrastructure</a> ✅ &nbsp;|&nbsp;
     <a href="../phase-2-windows-sysmon">Phase 2: Windows + Sysmon</a> ✅ &nbsp;|&nbsp;
-    <a href="../phase-3-attack-simulation">Phase 3: Attack Simulation</a> 📋
+    <a href="../phase-3-attack-simulation">Phase 3: Attack Simulation</a> ✅
   </sub>
 </p>
