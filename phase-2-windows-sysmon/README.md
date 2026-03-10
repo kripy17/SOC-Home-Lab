@@ -10,9 +10,19 @@
 [![Sysmon](https://img.shields.io/badge/Sysmon-SwiftOnSecurity-darkgreen?style=for-the-badge)](https://github.com/SwiftOnSecurity/sysmon-config)
 [![VMware](https://img.shields.io/badge/VMware-Workstation-607078?style=for-the-badge&logo=vmware&logoColor=white)](https://www.vmware.com/)
 [![Phase](https://img.shields.io/badge/Series-Phase_2_of_3-8B0000?style=for-the-badge)](https://github.com/kripy17)
-[![Status](https://img.shields.io/badge/Status-Complete-2ea44f?style=for-the-badge)](https://github.com/kripy17)
+[![Status](https://img.shields.io/badge/Status-Complete-0056D2?style=for-the-badge)](https://github.com/kripy17)
 
 </p>
+
+---
+
+<div align="center">
+
+| 🖥️ Windows Endpoint | 🔬 Sysmon Events | 🔗 Pipeline Status | 🛠️ Log Sources |
+|:---:|:---:|:---:|:---:|
+| 1 | 6 types monitored | ✅ Operational | Windows Events + Sysmon |
+
+</div>
 
 ---
 
@@ -107,7 +117,12 @@ The Windows 10 endpoint VM is configured to balance realism with host system con
 | Network | VMnet8 (NAT) |
 | Sysmon | Installed |
 
-<img src="screenshots/windows/windows_vm_allocation.png" width="700">
+<details>
+<summary><strong>Windows VM resource allocation</strong></summary>
+
+<img src="screenshots/windows/windows_vm_allocation.png" width="900">
+
+</details>
 
 This allocation gives the Windows VM enough headroom to run Sysmon and the Wazuh agent simultaneously while keeping the host system stable. The NAT network places the Windows endpoint on the same internal subnet as the SOC server, enabling direct agent-to-manager communication.
 
@@ -117,8 +132,19 @@ This allocation gives the Windows VM enough headroom to run Sysmon and the Wazuh
 
 Before onboarding any new agent, all Wazuh services on the SOC server must be confirmed as running. A degraded or stopped component at this stage would cause agent registration to fail silently — making this verification step critical before proceeding.
 
-<img src="screenshots/wazuh/deployment_wazuh_services_running1.png" width="700">
-<img src="screenshots/wazuh/deployment_wazuh_services_running2.png" width="700">
+<details>
+<summary><strong>Wazuh services running — output 1</strong></summary>
+
+<img src="screenshots/wazuh/deployment_wazuh_services_running1.png" width="900">
+
+</details>
+
+<details>
+<summary><strong>Wazuh services running — output 2</strong></summary>
+
+<img src="screenshots/wazuh/deployment_wazuh_services_running2.png" width="900">
+
+</details>
 
 **Services verified:**
 
@@ -143,7 +169,12 @@ Wazuh agent communication depends on specific ports being open on the SOC server
 | **1515** | Agent registration |
 | **443** | Wazuh Dashboard HTTPS access |
 
-<img src="screenshots/wazuh/deployment_ports_listening.png" width="700">
+<details>
+<summary><strong>Required ports confirmed listening</strong></summary>
+
+<img src="screenshots/wazuh/deployment_ports_listening.png" width="900">
+
+</details>
 
 All required ports confirmed as listening and reachable from the Windows VM.
 
@@ -153,8 +184,19 @@ All required ports confirmed as listening and reachable from the Windows VM.
 
 The Windows agent was registered through the **Wazuh Dashboard GUI**, which generates a unique authentication key for the endpoint. This key-based approach ensures only authorised agents can forward logs to the SIEM — preventing unauthorised data injection.
 
-<img src="screenshots/wazuh/deployment_agent_created.png" width="700">
-<img src="screenshots/wazuh/deployment_agent_active_server.png" width="700">
+<details>
+<summary><strong>Windows agent created in Wazuh Dashboard</strong></summary>
+
+<img src="screenshots/wazuh/deployment_agent_created.png" width="900">
+
+</details>
+
+<details>
+<summary><strong>Windows agent status — Active on server</strong></summary>
+
+<img src="screenshots/wazuh/deployment_agent_active_server.png" width="900">
+
+</details>
 
 The agent was assigned a unique ID and its status transitioned to **Active** once the connection was established from the Windows VM side.
 
@@ -164,13 +206,19 @@ The agent was assigned a unique ID and its status transitioned to **Active** onc
 
 With the agent registered, the Wazuh agent on the Windows VM was configured with the SOC server's IP address and the generated authentication key, then started as a Windows service.
 
-**1. Configure the agent using the Wazuh Windows GUI:**
+<details>
+<summary><strong>Wazuh agent configured in Windows GUI</strong></summary>
 
-<img src="screenshots/windows/deployment_windows_gui_configured.png" width="700">
+<img src="screenshots/windows/deployment_windows_gui_configured.png" width="900">
 
-**2. Start the Wazuh agent service and confirm it is running:**
+</details>
 
-<img src="screenshots/windows/deployment_windows_service_running.png" width="700">
+<details>
+<summary><strong>Wazuh agent service running on Windows VM</strong></summary>
+
+<img src="screenshots/windows/deployment_windows_service_running.png" width="900">
+
+</details>
 
 The service started successfully and began communicating with the Wazuh Manager over port 1514.
 
@@ -180,7 +228,12 @@ The service started successfully and began communicating with the Wazuh Manager 
 
 With the agent active, the Wazuh Dashboard was checked to confirm that Windows event logs were successfully arriving at the SOC server. This end-to-end check validates the full pipeline — from Windows endpoint through the agent to the Wazuh Manager and into the Dashboard.
 
-<img src="screenshots/wazuh/telemetry_log_flow_verified.png" width="700">
+<details>
+<summary><strong>Telemetry log flow verified in Wazuh Dashboard</strong></summary>
+
+<img src="screenshots/wazuh/telemetry_log_flow_verified.png" width="900">
+
+</details>
 
 **Validation confirmed:**
 
@@ -238,7 +291,12 @@ This configuration provides a well-balanced ruleset that:
 * Covers process creation, network connections, registry changes, and more
 * Is regularly updated to reflect current threat detection best practices
 
-<img src="screenshots/windows/sysmon_config_downloaded.png" width="700">
+<details>
+<summary><strong>SwiftOnSecurity Sysmon config downloaded</strong></summary>
+
+<img src="screenshots/windows/sysmon_config_downloaded.png" width="900">
+
+</details>
 
 ---
 
@@ -250,7 +308,12 @@ The configuration file was applied to Sysmon using an elevated **PowerShell** se
 sysmon64.exe -c sysmonconfig.xml
 ```
 
-<img src="screenshots/windows/sysmon_configuration_applied.png" width="700">
+<details>
+<summary><strong>Sysmon configuration applied successfully</strong></summary>
+
+<img src="screenshots/windows/sysmon_configuration_applied.png" width="900">
+
+</details>
 
 Sysmon confirmed the configuration was accepted and began generating telemetry events immediately. No restart was required — the new ruleset takes effect in real time.
 
@@ -270,7 +333,12 @@ Applications and Services Logs
             └── Operational
 ```
 
-<img src="screenshots/windows/sysmon_event_logs_visible.png" width="700">
+<details>
+<summary><strong>Sysmon event logs visible in Event Viewer</strong></summary>
+
+<img src="screenshots/windows/sysmon_event_logs_visible.png" width="900">
+
+</details>
 
 **Event ID 1 (Process Creation)** events were immediately visible, generated by normal system activity — confirming Sysmon is actively monitoring the endpoint and the configuration was applied correctly.
 
@@ -297,7 +365,12 @@ This gives the SOC server complete visibility into endpoint-level activity — f
 
 To confirm that Sysmon telemetry was successfully reaching the SIEM, events generated on the Windows endpoint were traced through to the **Wazuh Security Events dashboard**.
 
-<img src="screenshots/windows/sysmon_logs_visible_wazuh.png" width="700">
+<details>
+<summary><strong>Sysmon logs visible in Wazuh Dashboard</strong></summary>
+
+<img src="screenshots/windows/sysmon_logs_visible_wazuh.png" width="900">
+
+</details>
 
 **Validation confirmed:**
 
@@ -426,6 +499,6 @@ Phase 2 is complete. The SOC lab now has a fully operational Windows endpoint wi
     Part of the <strong>SOC Home Lab Series</strong> by <a href="https://github.com/kripy17">Krish Patel</a><br><br>
     <a href="../phase-1-wazuh-deployment">Phase 1: SIEM Infrastructure</a> ✅ &nbsp;|&nbsp;
     <a href="../phase-2-windows-sysmon">Phase 2: Windows + Sysmon</a> ✅ &nbsp;|&nbsp;
-    <a href="../phase-3-attack-simulation">Phase 3: Attack Simulation</a> 📋
+    <a href="../phase-3-attack-simulation">Phase 3: Attack Simulation</a> ✅
   </sub>
 </p>
