@@ -11,10 +11,10 @@
 [![Sysmon](https://img.shields.io/badge/Sysmon-SwiftOnSecurity-darkgreen?style=for-the-badge)](https://github.com/SwiftOnSecurity/sysmon-config)
 [![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-FF0000?style=for-the-badge)](https://attack.mitre.org/)
 [![VMware](https://img.shields.io/badge/VMware-Workstation-607078?style=for-the-badge&logo=vmware&logoColor=white)](https://www.vmware.com/)
-[![Phase](https://img.shields.io/badge/Series-Phase_3_of_3-8B0000?style=for-the-badge)](https://github.com/kripy17)
-[![Status](https://img.shields.io/badge/Status-Complete-0056D2?style=for-the-badge)](https://github.com/kripy17)
-[![Attacks](https://img.shields.io/badge/Attacks_Simulated-5_of_5-0056D2?style=for-the-badge)](https://github.com/kripy17)
-[![Incidents](https://img.shields.io/badge/Incidents_Documented-5-0056D2?style=for-the-badge)](https://github.com/kripy17)
+[![Phase](https://img.shields.io/badge/Series-Phase_3_of_3-8B0000?style=for-the-badge)](https://github.com/sockr17)
+[![Status](https://img.shields.io/badge/Status-Complete-0056D2?style=for-the-badge)](https://github.com/sockr17)
+[![Attacks](https://img.shields.io/badge/Attacks_Simulated-5_of_5-0056D2?style=for-the-badge)](https://github.com/sockr17)
+[![Incidents](https://img.shields.io/badge/Incidents_Documented-5-0056D2?style=for-the-badge)](https://github.com/sockr17)
 
 </p>
 
@@ -926,7 +926,7 @@ The lab now has a complete end-to-end pipeline — from endpoint activity, throu
 
 <div align="center">
 
-*SOC Home Lab Series by [Krish Patel](https://github.com/kripy17)*
+*SOC Home Lab Series by [Krish Patel](https://github.com/sockr17)*
 
 <br>
 
