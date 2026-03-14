@@ -223,6 +223,6 @@ SOC-Home-Lab/
     <a href="./phase-2-windows-sysmon">Phase 2: Windows + Sysmon</a> ✅ &nbsp;·&nbsp;
     <a href="./phase-3-attack-simulation">Phase 3: Attack Simulation</a> ✅
     <br><br>
-    <a href="https://github.com/kripy17">Krish Patel</a> &nbsp;·&nbsp; SOC Home Lab Series
+    <a href="https://github.com/sockr17">Krish Patel</a> &nbsp;·&nbsp; SOC Home Lab Series
   </sub>
 </p>
