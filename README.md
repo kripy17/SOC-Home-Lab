@@ -1,10 +1,36 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=0:0a0a0a,100:0d1117&height=180&text=SOC%20HOME%20LAB&fontSize=58&fontColor=00ff41&fontAlignY=52&stroke=00ff41&strokeWidth=1&desc=%5B%20Endpoint%20Detection%20%7C%20Threat%20Simulation%20%7C%20Incident%20Investigation%20%5D&descSize=13&descAlignY=73&descFontColor=4a9a5a" />
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=0:0a0a0a,100:0d1117&height=180&text=SOC%20HOME%20LAB&fontSize=58&fontColor=00ff41&fontAlignY=42&stroke=00ff41&strokeWidth=1&desc=%5B%20Endpoint%20Detection%20%7C%20Threat%20Simulation%20%7C%20Incident%20Investigation%20%5D&descSize=13&descAlignY=63&descFontColor=4a9a5a" />
 </p>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=15&duration=3000&pause=1000&color=00ff41&center=true&vCenter=true&width=750&lines=%24+sudo+.%2Fwazuh-install.sh+-a+%E2%80%94+SIEM+deployed+successfully;%24+5+attacks+simulated+%7C+68+alerts+generated+%7C+5+incidents+documented;%24+wazuh-agent+status%3A+ACTIVE+%7C+sysmon%3A+RUNNING+%7C+pipeline%3A+OPERATIONAL;%24+all+endpoints+monitored.+no+alert+ignored." />
 </p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Wazuh-SIEM-00ff41?style=for-the-badge&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Ubuntu%2022.04-Server-00ff41?style=for-the-badge&logo=ubuntu&logoColor=00ff41&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Windows%2010-Endpoint-00ff41?style=for-the-badge&logo=windows&logoColor=00ff41&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/Kali%20Linux-Endpoint-00ff41?style=for-the-badge&logo=kalilinux&logoColor=00ff41&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/VMware-Workstation-00ff41?style=for-the-badge&logo=vmware&logoColor=00ff41&labelColor=0a0a0a" />
+  <img src="https://img.shields.io/badge/MITRE-ATT%26CK-00ff41?style=for-the-badge&labelColor=0a0a0a" />
+</p>
+
+<p align="center">
+  <sub><strong>3</strong> phases &nbsp;·&nbsp; <strong>5</strong> attacks simulated &nbsp;·&nbsp; <strong>68</strong> alerts generated &nbsp;·&nbsp; <strong>5</strong> incidents documented &nbsp;·&nbsp; <strong>3</strong> endpoints monitored</sub>
+</p>
+
+---
+
+## Contents
+
+- [About](#about)
+- [Phases](#phases)
+- [Architecture](#architecture)
+- [Telemetry Pipeline](#telemetry-pipeline)
+- [MITRE ATT&CK Coverage](#mitre-attck-coverage)
+- [Tools & Technologies](#tools--technologies)
+- [Repository Structure](#repository-structure)
+- [Hardware](#hardware)
 
 ---
 
@@ -140,11 +166,32 @@ Windows Endpoint
   └── System activity (processes · network · registry · files)
         └── Sysmon (SwiftOnSecurity config)
               └── Wazuh Agent
-                    └── port 1514 ──► Wazuh Manager
-                                            └── Wazuh Indexer
-                                                  └── Wazuh Dashboard
-                                                        └── Alert · Search · Investigate
+                    └── port 1514 ──▶ Wazuh Manager
+                                        └── Wazuh Indexer
+                                              └── Wazuh Dashboard
+                                                    └── Alert · Search · Investigate
 ```
+
+---
+
+## MITRE ATT&CK Coverage
+
+Eight techniques mapped across five simulations — full detail in the [Phase 3 incident reports](./phase-3-attack-simulation/incident_reports/README.md).
+
+<p>
+  <img src="https://img.shields.io/badge/T1110.001-Brute%20Force%3A%20Password%20Guessing-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/T1059.001-PowerShell-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/T1027-Obfuscated%20Files-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <br>
+  <img src="https://img.shields.io/badge/T1059.003-Windows%20Command%20Shell-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/T1082-System%20Info%20Discovery-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/T1547.001-Registry%20Run%20Keys-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <br>
+  <img src="https://img.shields.io/badge/T1134-Access%20Token%20Manipulation-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+  <img src="https://img.shields.io/badge/T1134.001-Token%20Impersonation-0a0a0a?style=flat-square&labelColor=00ff41&color=0a0a0a" />
+</p>
+
+4 confirmed true positives, 1 true positive with an identified false-positive pattern, 1 partial detection with a documented gap — see [Phase 3](#phases) for the full verdict table.
 
 ---
 
